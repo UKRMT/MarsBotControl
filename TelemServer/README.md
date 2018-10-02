@@ -10,6 +10,10 @@ In the future it can collect sensor data and publish meaningful information.
 
 At the same time this program can also receive telem information from the teams controlling computer so that information like current joystick input can also be sent back and seen over OpenMCT.
 
+## ToDo
+Add support for more than one active websocket connection.
+Gracefully handle websocket disconnection
+
 ## Building Setup
 Run qmake then make
 
