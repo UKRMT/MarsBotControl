@@ -73,8 +73,8 @@ EchoServer::EchoServer(quint16 port, bool debug, QObject *parent) :
     connect(telemTimer, SIGNAL(timeout()), this, SLOT(sendTelem()));
 
     // make a serial control object
-     // SET THE SERIAL PORT SETTINGS
-        serialPort.setPortName("/dev/ttyS0");
+    // SET THE SERIAL PORT SETTINGS
+    serialPort.setPortName("/dev/ttyS0");
     serialPort.setBaudRate(QSerialPort::Baud115200);
     serialPort.setDataBits(QSerialPort::Data8);
     serialPort.setStopBits(QSerialPort::OneStop);
@@ -85,13 +85,10 @@ EchoServer::EchoServer(quint16 port, bool debug, QObject *parent) :
     connect(&serialPort, SIGNAL(readyRead()), this, SLOT(onReadyReadSerial()));
 
     if (!serialPort.open(QIODevice::ReadWrite)) {
-      qDebug() << "cannot open serial port";
+        qDebug() << "cannot open serial port";
     } else {
-    qDebug() << "opened serial port";
+        qDebug() << "opened serial port";
     }
-
-    serialPort.write(QByteArray("KATSBOT2019"));
-
 
 }
 //! [constructor]
@@ -104,12 +101,14 @@ EchoServer::~EchoServer()
 
 void EchoServer::onReadyReadSerial()
 {
-
-// READ THE CURRENTLY AVAILABLE BYTES FROM THE PORT
+    // READ THE CURRENTLY AVAILABLE BYTES FROM THE PORT
     QByteArray byteArray = serialPort.readAll();
+
     if (byteArray.isEmpty() == false) {
         // SEND THE BYTES TO THE TCP CLIENT
-      qDebug() << byteArray;
+        qDebug() << byteArray;
+    } else {
+        qDebug() << "INFO:: read no bytes from serial!";
     }
 
 }
@@ -167,17 +166,13 @@ void EchoServer::processTextMessage(QString message)
     qDebug() << "got publish from motors, i should handle this better";
 
   } else if(message.startsWith("M")) {
-    QString m = message.split(' ').at(1);
-    QString d = message.split(' ').at(2);
-    QString s = message.split(' ').at(3);
     
-    qDebug() << "got command for motor " << m << " for speed " << s << " and dirction " << d;
-    QString str = "M"+d+s+d+s+d+s+d+s+"\n";
+    qDebug() << "got command for motor " << message;
     QByteArray arr;
-    arr.append(str);
+    arr.append(message);
     serialPort.write(arr);
 
-  qDebug() << "sent" << str;
+     qDebug() << "sent" << arr;
     
   } else {
     qDebug() << "not recognized";
