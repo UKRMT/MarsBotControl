@@ -1,4 +1,4 @@
-QT       += core websockets
+QT       += core websockets serialport
 QT       -= gui
 
 TARGET = echoserver

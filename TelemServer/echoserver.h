@@ -55,7 +55,11 @@
 #include <QtCore/QByteArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QSerialPort>
+#include <QByteArray>
 #include <QTimer>
+#include <QIODevice>
+
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -75,7 +79,7 @@ private Q_SLOTS:
     void processTextMessage(QString message);
     void processBinaryMessage(QByteArray message);
     void socketDisconnected();
-
+    void onReadyReadSerial();
     public slots:
     void sendTelem();
     
@@ -84,6 +88,7 @@ private:
     QList<QWebSocket *> m_clients;
     QList<QString> m_props;
     QTimer *telemTimer;
+    QSerialPort serialPort;
     bool m_debug;
 };
 
