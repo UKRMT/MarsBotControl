@@ -90,6 +90,8 @@ private:
     QTimer *telemTimer;
     QSerialPort serialPort;
     bool m_debug;
+
+    int motorVals[4];
 };
 
 #endif //ECHOSERVER_H

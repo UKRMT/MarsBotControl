@@ -72,6 +72,12 @@ EchoServer::EchoServer(quint16 port, bool debug, QObject *parent) :
     telemTimer = new QTimer(this);
     connect(telemTimer, SIGNAL(timeout()), this, SLOT(sendTelem()));
 
+    // intitialize motor values to keep track of websocket commands
+    motorVals[0] = 0;
+    motorVals[1] = 0;
+    motorVals[2] = 0;
+    motorVals[3] = 0;
+
     // make a serial control object
     // SET THE SERIAL PORT SETTINGS
     serialPort.setPortName("/dev/ttyS0");
@@ -168,8 +174,28 @@ void EchoServer::processTextMessage(QString message)
   } else if(message.startsWith("M")) {
     
     qDebug() << "got command for motor " << message;
+
+    for(int mc=0;mc<4;mc++){
+      int temp =  message.mid(mc*4+2,3).toInt();
+      int dir = message.mid(mc*4+1,1).toInt();
+
+      if( dir==2 ){
+	motorVals[mc] = 0;
+      } else if(temp>0) {
+	temp *= (dir==0) ? 1 : -1;	
+	motorVals[mc]=temp;
+      }
+    }
+
+    QString newString = "M";
+    for( int mc=0; mc<4;mc++ ){
+      newString.append(motorVals[mc]<=0 ? "1" : "0");
+      newString.append(QString::number((motorVals[mc]<0)?motorVals[mc]*-1:motorVals[mc]).rightJustified(3,'0'));
+    }
+    newString.append('\n');
+    
     QByteArray arr;
-    arr.append(message);
+    arr.append(newString);
     serialPort.write(arr);
 
      qDebug() << "sent" << arr;
