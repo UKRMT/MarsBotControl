@@ -16,7 +16,7 @@ async def notify_state():
         ts = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         for s in SUBS:
             print(s[1])
-            message = json.dumps({'id':s[1],'timestamp':ts,'value':55})
+            message = json.dumps({'id':s[1],'timestamp':ts,'value':STATE[s[1]]})
             print(message)
             await asyncio.wait([s[0].send(message)])
     
@@ -40,10 +40,10 @@ async def counter(websocket, path):
             else:
                 print(message)
                 data = json.loads(message)
-                if data['action'] == 'ping':
-                    await notify_state()
-                else:
-                    logging.error("unsupported event: {}", data)
+                for key in data:
+                    STATE[key]=data[key]
+                await notify_state()
+
     except websockets.ConnectionClosed:
         print('connection closed')
         return 
