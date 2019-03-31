@@ -1,5 +1,5 @@
 import time
-import datetime
+from  datetime import datetime
 import asyncio
 import json
 import websockets
@@ -18,7 +18,8 @@ class MessageHub:
         
     async def notify_state(self):    
         if SUBS != set():
-            ts = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+            
+            ts = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
             for s in SUBS:
                 print(s[1])
                 message = json.dumps({'id':s[1],'timestamp':ts,'value':STATE[s[1]]})
