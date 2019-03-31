@@ -1,6 +1,6 @@
 import json
 
-def getDictionaryKeys():
+def state_from_openmct_dict():
     dictionaryFile = '/var/www/html/web-control/src/plugins/dictionary-plugin/dictionary.json'
     dictionary = {}
 

@@ -16,7 +16,7 @@ import json
 import datetime
 import time
 import _thread
-from dictionaryDump import getDictionaryKeys as gdk
+from dict_helper import state_from_openmct_dict as new_state
 
 class SensorsWebSocket():
     thread_dict = {}
@@ -26,7 +26,7 @@ class SensorsWebSocket():
     Description: initalizes the sensor poster by setting up the dictionary json as an instance accessable array.
     '''
     def __init__(self):
-        self.sensor_dict = gdk()
+        self.sensor_dict = new_state()
         thread_dict = {}
         start_server = websockets.serve(self.listener, port=1234)
         asyncio.get_event_loop().run_until_complete(start_server)
