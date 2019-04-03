@@ -12,7 +12,6 @@ DRIVE = DriveControl()
 
 class MessageHub:
     def __init__(self):
-        self.drive = DriveControl()
         asyncio.get_event_loop().run_until_complete(websockets.serve(self.counter, port=1234))
         asyncio.get_event_loop().run_forever()
         
