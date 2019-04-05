@@ -22,10 +22,19 @@ from roboclaw_3 import Roboclaw
 
 class DriveControl:
     def __init__(self):
+        
         self.rc1 = Roboclaw('/dev/roboclaw1', 115200)
         self.rc2 = Roboclaw('/dev/roboclaw2', 115200)
-        self.rc1.Open()
-        self.rc2.Open()
+
+        while self.rc1.Open()==0:
+            print('OPEN ROBOCLAW 1 COMMS FAILED, RETRYING...')
+            time.sleep(1)
+        print('OPENED ROBOCLAW 1 COMMS')
+        
+        while self.rc2.Open()==0:
+            print('OPEN ROBOCLAW 2 COMMS FAILED, RETRYING...')
+            time.sleep(1)
+        print('OPENED ROBOCLAW 2 COMMS')
 
     def moveM1(self, speed):
         self.drive(self.rc1, 'm1', speed)
