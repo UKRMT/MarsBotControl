@@ -19,6 +19,10 @@ Code for communicating with and controlling the robot
   - ```stopStream()``` : end send adc values at interval
   
 
+- Teensy3.2 arduino firmware to provide information on ADC channels for sensor readings (for now)
+  - await a serial message "begin" + newline = "begin\n", then start streaming values separated by tabs or commas every 100ms or so
+  - if message "end\n" is recieved, stop sending ADC readings.
+
 - add two instances of ```ActuatorControl``` to ```MessageHub```, add parsing logic for corresponding control input messages received
 - add instance of ```ADCInterface``` to ```MessageHub``` and call setInterface on the ```ActuatorControl``` objects
 
