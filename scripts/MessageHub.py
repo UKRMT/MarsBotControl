@@ -5,12 +5,14 @@ import json
 import websockets
 from dict_helper import state_from_openmct_dict as new_state
 from DriveControl import DriveControl
+from ActuatorControl import ActuatorControl
+from BeltControl import BeltControl
 
 STATE = new_state()   
 SUBS  = set()
 DRIVE = DriveControl()
-RAISE = ActuatorControl('/dev/roboclaw4')
-DIG = ActuatorControl('/dev/roboclaw3')
+ACTS = ActuatorControl('/dev/roboclaw4')
+BELTS = BeltControl('/dev/roboclaw3')
 
 class MessageHub:
     def __init__(self):
@@ -59,9 +61,9 @@ class MessageHub:
                             elif motor=='motor4speed':
                                 DRIVE.moveM4(STATE[key])
                             elif motor=='digarmspeed':
-                                DIG.move(STATE[key])
+                                ACTS.moveDig(STATE[key])
                             elif motor=='raisearmspeed':
-                                RAISE.move(STATE[key])
+                                ACTS.moveRaise(STATE[key])
                             elif motor=='digmotorspeed':
                                 BELTS.dig(STATE[key])
                             elif motor=='offloadmototspeed':

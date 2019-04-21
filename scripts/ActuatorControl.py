@@ -41,9 +41,12 @@ class ActuatorControl:
         #self.pos = self.act_interface.readADC()
 
     # move the actuator letting the move command specify the direction
-    def move(self, speed=False):
-        self.moveActScalar(speed)
-        
+    def moveDig(self, speed=False):
+        self.moveActBinary('dig',speed)
+    
+	def moveRaise(self, speed=False):
+		self.moveActBinary('raise',speed)
+		
     #  move up with the option of specifying speed
     def moveUp(self, speed=False):
         #refresh position
@@ -70,17 +73,28 @@ class ActuatorControl:
     ############# private methods #############
 
     # single speed actuator movement
-    def moveActBinary(self, speed):
+    def moveActBinary(self, actChoice, speed):
         speed = verify_speed(speed)
-        if speed <= 1800:
-            self.act.ForwardM1(0x80, -50)
-        elif speed <= 2200:
-            self.act.BackwardM1(0x80, 50)
-        else:
-            self.act.ForwardM1(0x80, 0)
+		if actChoice=='dig':
+			if speed <= 1800:
+				self.act.ForwardM1(0x80, 100)
+			elif speed <= 2200:
+				self.act.BackwardM1(0x80, 100)
+			else:
+				self.act.ForwardM1(0x80, 0)
+		elif actChoice=='raise':
+			if speed <= 1800:
+				self.act.ForwardM2(0x80, 100)
+			elif speed <= 2200:
+				self.act.BackwardM2(0x80, 100)
+		else:
+			print("bad act choice, stopping both")
+			self.act.ForwardM1(0x80, 0)
+			self.act.ForwardM2(0x80, 0)
+		
     
     # variable speed actuator movement
-    def moveActScalar(self, speed):
+    def moveActScalar(self, actChoice, speed):
         speed = self.verify_speed(speed)
         if speed <= 1800:
             # move actuator forward
@@ -96,11 +110,22 @@ class ActuatorControl:
             adjusted_speed = 0
 
         if direction == "f" : 
-            self.act.ForwardM1(0x80, adjusted_speed)
+			if actChoice=='dig':
+				self.act.ForwardM1(0x80, adjusted_speed)
+			elif actChoice=='raise':
+				self.act.ForwardM2(0x80, adjusted_speed)
+			else:
+				print("bad actuator choice")
         elif direction == "b":
-            self.act.BackwardM1(0x80, adjusted_speed)
+			if actChoice=='dig':
+				self.act.BackwardM1(0x80, adjusted_speed)
+			if actChoice=='raise':
+				self.act.BackwardM2(0x80, adjusted_speed)
+			else:
+				print("bad actuator choice")
         else: 
             self.act.ForwardM1(0x80, 0)
+			self.act.ForwardM2(0x80, 0)
 
     # verifies speed and position 
     def verify_speed(self, speed):

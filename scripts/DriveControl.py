@@ -36,6 +36,14 @@ class DriveControl:
             time.sleep(1)
         print('OPENED ROBOCLAW 2 COMMS')
 
+	def moveLeftSide(self, speed):
+		self.drive(self.rc1, 'm1', speed)
+		self.drive(self.rc1, 'm2', speed)
+	
+	def moveRightSide(self, speed)
+		self.drive(self.rc2, 'm1', speed)
+		self.drive(self.rc2, 'm2', speed)
+		
     def moveM1(self, speed):
         self.drive(self.rc1, 'm1', speed)
 
