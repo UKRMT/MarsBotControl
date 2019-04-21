@@ -69,7 +69,7 @@ class MessageHub:
                             elif motor=='offloadmototspeed':
                                 BELTS.offload(STATE[key])
                                 
-                            await self.notify_state()
+					await self.notify_state()
 
         except websockets.ConnectionClosed:
             print('connection closed')
