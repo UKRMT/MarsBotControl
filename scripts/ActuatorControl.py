@@ -25,25 +25,29 @@ class ActuatorControl:
     # max and min values that the ADCInterface will send
     MAX_POS = 100
     MIN_POS = 0
-    def __init__(self):
-        self.act =  Roboclaw('/dev/roboclaw3', 115200)
+    def __init__(self, addr):
+        self.act =  Roboclaw(addr, 115200)
         while self.act.Open()==0:
             print("Failed to open actuator comms, trying again.")
             time.sleep(1)
-        print("Opened Actuator roboclaw")
+        print("Opened Actuator roboclaw to ",addr)
 
     ############# public methods #############
 
     # set adc interface for reading the current position of the actuator
-    def setInterface(self, adcObj):
+    #def setInterface(self, adcObj):
         #expects an adc interface object
-        self.act_interface =  adcObj
-        self.pos = self.act_interface.readADC()
+        #self.act_interface =  adcObj
+        #self.pos = self.act_interface.readADC()
 
+    # move the actuator letting the move command specify the direction
+    def move(self, speed=False):
+        self.moveActScalar(speed)
+        
     #  move up with the option of specifying speed
     def moveUp(self, speed=False):
         #refresh position
-        self.pos = self.act_interface.readADC()
+        #self.pos = self.act_interface.readADC()
         if not speed:
             self.moveActBinary(1799)
         else: 

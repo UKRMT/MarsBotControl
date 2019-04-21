@@ -7,8 +7,10 @@ from dict_helper import state_from_openmct_dict as new_state
 from DriveControl import DriveControl
 
 STATE = new_state()   
-SUBS = set()
+SUBS  = set()
 DRIVE = DriveControl()
+RAISE = ActuatorControl('/dev/roboclaw4')
+DIG = ActuatorControl('/dev/roboclaw3')
 
 class MessageHub:
     def __init__(self):
@@ -56,8 +58,16 @@ class MessageHub:
                                 DRIVE.moveM3(STATE[key])
                             elif motor=='motor4speed':
                                 DRIVE.moveM4(STATE[key])
-
-                    await self.notify_state()
+                            elif motor=='digarmspeed':
+                                DIG.move(STATE[key])
+                            elif motor=='raisearmspeed':
+                                RAISE.move(STATE[key])
+                            elif motor=='digmotorspeed':
+                                BELTS.dig(STATE[key])
+                            elif motor=='offloadmototspeed':
+                                BELTS.offload(STATE[key])
+                                
+                            await self.notify_state()
 
         except websockets.ConnectionClosed:
             print('connection closed')
