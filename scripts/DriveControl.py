@@ -71,9 +71,11 @@ class DriveControl:
             direction = 'f'
             scaledValue = 0
 
+        # forward and backward go the same direction here becuase the
+        # motors are reversed in the wiring
         if motor=='m1':
             if direction=='f':
-                claw.ForwardM1(0x80, int(scaledValue))
+                claw.BackwardM1(0x80, int(scaledValue))
             elif direction=='b':
                 claw.BackwardM1(0x80, int(scaledValue))
             else:
@@ -82,7 +84,7 @@ class DriveControl:
             if direction=='f':
                 claw.ForwardM2(0x80, int(scaledValue))
             elif direction=='b':
-                claw.BackwardM2(0x80, int(scaledValue))
+                claw.ForwardM2(0x80, int(scaledValue))
             else:
                 print('bad direction value')
         else:
