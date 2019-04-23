@@ -1,7 +1,10 @@
 import json
 
-def state_from_openmct_dict():
-    dictionaryFile = '/var/www/html/web-control/src/plugins/dictionary-plugin/dictionary.json'
+def state_from_openmct_dict(f=False):
+    if not f:
+        dictionaryFile = '/var/www/html/web-control/src/plugins/dictionary-plugin/dictionary.json'
+    else:
+        dictionaryFile = f
     dictionary = {}
 
     with open(dictionaryFile) as json_file:
