@@ -22,7 +22,7 @@ from roboclaw_3 import Roboclaw
 
 class DriveControl:
     def __init__(self):
-        
+
         self.rc1 = Roboclaw('/dev/roboclaw1', 115200)
         self.rc2 = Roboclaw('/dev/roboclaw2', 115200)
 
@@ -30,20 +30,20 @@ class DriveControl:
             print('OPEN ROBOCLAW 1 COMMS FAILED, RETRYING...')
             time.sleep(1)
         print('OPENED ROBOCLAW 1 COMMS')
-        
+
         while self.rc2.Open()==0:
             print('OPEN ROBOCLAW 2 COMMS FAILED, RETRYING...')
             time.sleep(1)
         print('OPENED ROBOCLAW 2 COMMS')
 
-	def moveLeftSide(self, speed):
-		self.drive(self.rc1, 'm1', speed)
-		self.drive(self.rc1, 'm2', speed)
-	
-	def moveRightSide(self, speed)
-		self.drive(self.rc2, 'm1', speed)
-		self.drive(self.rc2, 'm2', speed)
-		
+    def moveLeftSide(self, speed):
+        self.drive(self.rc1, 'm1', speed)
+        self.drive(self.rc1, 'm2', speed)
+
+    def moveRightSide(self, speed):
+        self.drive(self.rc2, 'm1', speed)
+        self.drive(self.rc2, 'm2', speed)
+
     def moveM1(self, speed):
         self.drive(self.rc1, 'm1', speed)
 
@@ -54,7 +54,7 @@ class DriveControl:
         self.drive(self.rc2, 'm1', speed)
 
     def moveM4(self, speed):
-        self.drive(self.rc2, 'm2', speed)    
+        self.drive(self.rc2, 'm2', speed)
 
     def drive(self, claw, motor, speed):
         speed = self.ensureValidSpeed(speed)
@@ -87,15 +87,15 @@ class DriveControl:
                 print('bad direction value')
         else:
             print('bad motor index')
-                
-        
+
+
     def ensureValidSpeed(self, speed):
         if speed < 0:
             speed = 0
         if speed > 4095:
             speed = 4095
         return speed
-        
+
     def translateValue(self, value, leftMin, leftMax, rightMin, rightMax):
         leftSpan = leftMax - leftMin
         rightSpan = rightMax - rightMin

@@ -1,24 +1,22 @@
-#!python2.7
-#
 # ActuatorControl.py
 #
-# Description: 
-#   Code for controlling the arm actuators. It verifies a valid speed and position using 
-#   ADCInterface, and then moves the arm using roboclaw. NOTE: This code assumes that a 
-#   webosocket connection will be continuously sending move requests and therefore the 
-#   position checks happen in move. If signal is lost while the actuator is moving it 
-#   could overdrive the motor since there are no checks. Solution would be to create interrupt 
+# Description:
+#   Code for controlling the arm actuators. It verifies a valid speed and position using
+#   ADCInterface, and then moves the arm using roboclaw. NOTE: This code assumes that a
+#   webosocket connection will be continuously sending move requests and therefore the
+#   position checks happen in move. If signal is lost while the actuator is moving it
+#   could overdrive the motor since there are no checks. Solution would be to create interrupt
 #   driven position handler
 #
 
-#   
+#
 # Revision History:
 #   Josh A. 2019-04-12 Initial Version.
 #
 
 import time
 from roboclaw_3 import Roboclaw
-import ADCInterface as Actuator
+#import ADCInterface as Actuator
 
 
 class ActuatorControl:
@@ -43,17 +41,17 @@ class ActuatorControl:
     # move the actuator letting the move command specify the direction
     def moveDig(self, speed=False):
         self.moveActBinary('dig',speed)
-    
-	def moveRaise(self, speed=False):
-		self.moveActBinary('raise',speed)
-		
+
+    def moveRaise(self, speed=False):
+        self.moveActBinary('raise',speed)
+
     #  move up with the option of specifying speed
     def moveUp(self, speed=False):
         #refresh position
         #self.pos = self.act_interface.readADC()
         if not speed:
             self.moveActBinary(1799)
-        else: 
+        else:
             self.moveActScalar(speed)
 
     # move down with the option of specifying speed
@@ -62,11 +60,11 @@ class ActuatorControl:
         self.pos = self.act_interface.readADC()
         if not speed:
             self.moveActBinary(2201)
-        else: 
+        else:
             self.moveActScalar(speed)
     def stop(self):
         self.moveActBinary(2000)
-    
+
 
 
 
@@ -74,25 +72,25 @@ class ActuatorControl:
 
     # single speed actuator movement
     def moveActBinary(self, actChoice, speed):
-        speed = verify_speed(speed)
-		if actChoice=='dig':
-			if speed <= 1800:
-				self.act.ForwardM1(0x80, 100)
-			elif speed <= 2200:
-				self.act.BackwardM1(0x80, 100)
-			else:
-				self.act.ForwardM1(0x80, 0)
-		elif actChoice=='raise':
-			if speed <= 1800:
-				self.act.ForwardM2(0x80, 100)
-			elif speed <= 2200:
-				self.act.BackwardM2(0x80, 100)
-		else:
-			print("bad act choice, stopping both")
-			self.act.ForwardM1(0x80, 0)
-			self.act.ForwardM2(0x80, 0)
-		
-    
+        speed = self.verify_speed(speed)
+        if actChoice=='dig':
+            if speed <= 1800:
+                self.act.ForwardM1(0x80, 100)
+            elif speed <= 2200:
+                self.act.BackwardM1(0x80, 100)
+            else:
+                self.act.ForwardM1(0x80, 0)
+        elif actChoice=='raise':
+            if speed <= 1800:
+                self.act.ForwardM2(0x80, 100)
+            elif speed <= 2200:
+                self.act.BackwardM2(0x80, 100)
+        else:
+            print("bad act choice, stopping both")
+            self.act.ForwardM1(0x80, 0)
+            self.act.ForwardM2(0x80, 0)
+
+
     # variable speed actuator movement
     def moveActScalar(self, actChoice, speed):
         speed = self.verify_speed(speed)
@@ -104,32 +102,32 @@ class ActuatorControl:
             #move actuator backward
             adjusted_speed = translate_value(speed, 2200, 4095,0,127)
             direction = "f"
-        else : 
+        else :
             #do not move actuator
             direction = "s"
             adjusted_speed = 0
 
-        if direction == "f" : 
-			if actChoice=='dig':
-				self.act.ForwardM1(0x80, adjusted_speed)
-			elif actChoice=='raise':
-				self.act.ForwardM2(0x80, adjusted_speed)
-			else:
-				print("bad actuator choice")
+        if direction == "f" :
+            if actChoice=='dig':
+                self.act.ForwardM1(0x80, adjusted_speed)
+            elif actChoice=='raise':
+                self.act.ForwardM2(0x80, adjusted_speed)
+            else:
+                print("bad actuator choice")
         elif direction == "b":
-			if actChoice=='dig':
-				self.act.BackwardM1(0x80, adjusted_speed)
-			if actChoice=='raise':
-				self.act.BackwardM2(0x80, adjusted_speed)
-			else:
-				print("bad actuator choice")
-        else: 
+            if actChoice=='dig':
+                self.act.BackwardM1(0x80, adjusted_speed)
+            if actChoice=='raise':
+                self.act.BackwardM2(0x80, adjusted_speed)
+            else:
+                print("bad actuator choice")
+        else:
             self.act.ForwardM1(0x80, 0)
-			self.act.ForwardM2(0x80, 0)
+            self.act.ForwardM2(0x80, 0)
 
-    # verifies speed and position 
+    # verifies speed and position
     def verify_speed(self, speed):
-        # set maximum speed that the actuator can go 
+        # set maximum speed that the actuator can go
         maximum = 4095
 
         # cap the speed at the max in either direction
@@ -137,16 +135,16 @@ class ActuatorControl:
             speed = maximum
         elif speed < 0:
             speed = 0
-        else: 
-            speed = speed
-        
-        # make sure not to drive the actuators with no more left
-        if self.pos >= MAX_POS and speed > 2000:
-            speed = 2000
-        elif self.pos <= MIN_POS and speed < 2000:
-            speed = 2000
         else:
             speed = speed
+
+        # make sure not to drive the actuators with no more left
+        #if self.pos >= MAX_POS and speed > 2000:
+        #    speed = 2000
+        #elif self.pos <= MIN_POS and speed < 2000:
+        #    speed = 2000
+        #else:
+        #    speed = speed
 
         return speed
 
@@ -156,4 +154,3 @@ class ActuatorControl:
         rightSpan = rightMax - rightMin
         valueScaled = float(value-leftMin)/float(leftSpan)
         return rightMin + (valueScaled * rightSpan)
-        
