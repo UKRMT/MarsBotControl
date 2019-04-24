@@ -7,6 +7,7 @@ from dict_helper import state_from_openmct_dict as new_state
 from DriveControl import DriveControl
 from ActuatorControl import ActuatorControl
 from BeltControl import BeltControl
+from __future__ import print_function
 
 STATE = new_state()
 SUBS  = set()
@@ -62,8 +63,7 @@ class MessageHub:
                         STATE[key]=data[key]
                         if key.startswith('control'):
                             motor = key.split('.')[1]
-                            # changes massive conditional to dictionary for more portablity and process efficiency
-                            action_dict.get(motor, lambda state: print("unknown control key " + key)(STATE[key])
+                            self.action_dict.get(motor, lambda state: print("unknown control key " + key)(STATE[key])
                     await self.notify_state()
 
         except websockets.ConnectionClosed:
