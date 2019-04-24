@@ -15,6 +15,16 @@ ACTS = ActuatorControl('/dev/roboclaw3')
 BELTS = BeltControl('/dev/roboclaw4')
 
 class MessageHub:
+    action_dict = {
+        'motor1speed'       : (lambda state: DRIVE.moveM1(state)),
+        'motor2speed'       : (lambda state: DRIVE.moveM2(state)),
+        'motor3speed'       : (lambda state: DRIVE.moveM3(state)),
+        'motor4speed'       : (lambda state: DRIVE.moveM4(state)),
+        'digarmspeed'       : (lambda state: ACTS.moveDig(state)),
+        'raisearmspeed'     : (lambda state: ACTS.moveRaise(state)),
+        'digmotorspeed'     : (lambda state: BELTS.dig(state)),
+        'offloadmotorspeed' : (lambda state: BELTS.offload(state))
+    }
     def __init__(self):
         asyncio.get_event_loop().run_until_complete(websockets.serve(self.counter, port=1234))
         asyncio.get_event_loop().run_forever()
@@ -52,24 +62,8 @@ class MessageHub:
                         STATE[key]=data[key]
                         if key.startswith('control'):
                             motor = key.split('.')[1]
-                            if motor=='motor1speed':
-                                DRIVE.moveM1(STATE[key])
-                            elif motor=='motor2speed':
-                                DRIVE.moveM2(STATE[key])
-                            elif motor=='motor3speed':
-                                DRIVE.moveM3(STATE[key])
-                            elif motor=='motor4speed':
-                                DRIVE.moveM4(STATE[key])
-                            elif motor=='digarmspeed':
-                                ACTS.moveDig(STATE[key])
-                            elif motor=='raisearmspeed':
-                                ACTS.moveRaise(STATE[key])
-                            elif motor=='digmotorspeed':
-                                BELTS.dig(STATE[key])
-                            elif motor=='offloadmotorspeed':
-                                BELTS.offload(STATE[key])
-                            else:
-                                print("unknown control key: ",key)
+                            # changes massive conditional to dictionary for more portablity and process efficiency
+                            action_dict.get(motor, lambda state: print("unknown control key " + key)(STATE[key])
                     await self.notify_state()
 
         except websockets.ConnectionClosed:
