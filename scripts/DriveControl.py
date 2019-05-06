@@ -1,6 +1,7 @@
 #from roboclaw_3 import RoboClaw
 import time
 from roboclaw_3 import Roboclaw
+import asyncio
 
 # top down view of robot
 #
@@ -36,6 +37,11 @@ class DriveControl:
             time.sleep(1)
         print('OPENED ROBOCLAW 2 COMMS')
 
+        print('STARTING CURRENT MONITOR LOOP')
+        
+        #asyncio.ensure_future(self.monitor())
+        #asyncio.get_event_loop().run_forever()
+        
     def moveLeftSide(self, speed):
         self.drive(self.rc1, 'm1', speed)
         self.drive(self.rc1, 'm2', speed)
@@ -75,7 +81,7 @@ class DriveControl:
         # motors are reversed in the wiring
         if motor=='m1':
             if direction=='f':
-                claw.BackwardM1(0x80, int(scaledValue))
+                claw.ForwardM1(0x80, int(scaledValue))
             elif direction=='b':
                 claw.BackwardM1(0x80, int(scaledValue))
             else:
@@ -84,7 +90,7 @@ class DriveControl:
             if direction=='f':
                 claw.ForwardM2(0x80, int(scaledValue))
             elif direction=='b':
-                claw.ForwardM2(0x80, int(scaledValue))
+                claw.BackwardM2(0x80, int(scaledValue))
             else:
                 print('bad direction value')
         else:
@@ -103,3 +109,8 @@ class DriveControl:
         rightSpan = rightMax - rightMin
         valueScaled = float(value-leftMin)/float(leftSpan)
         return rightMin + (valueScaled * rightSpan)
+
+#    def monitor(self):
+#        cur1 = rc1.ReadCurrents(0x80)
+#        cur2 = rc2.ReadCurrents(0x80)
+        

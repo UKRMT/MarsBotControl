@@ -62,6 +62,7 @@ class ActuatorControl:
             self.moveActBinary(2201)
         else:
             self.moveActScalar(speed)
+
     def stop(self):
         self.moveActBinary(2000)
 
@@ -75,16 +76,18 @@ class ActuatorControl:
         speed = self.verify_speed(speed)
         if actChoice=='dig':
             if speed <= 1800:
-                self.act.ForwardM1(0x80, 100)
-            elif speed <= 2200:
-                self.act.BackwardM1(0x80, 100)
+                self.act.ForwardM1(0x80, 127)
+            elif speed >= 2200:
+                self.act.BackwardM1(0x80, 127)
             else:
                 self.act.ForwardM1(0x80, 0)
         elif actChoice=='raise':
             if speed <= 1800:
-                self.act.ForwardM2(0x80, 100)
-            elif speed <= 2200:
-                self.act.BackwardM2(0x80, 100)
+                self.act.ForwardM2(0x80, 127)
+            elif speed >= 2200:
+                self.act.BackwardM2(0x80, 127)
+            else:
+                self.act.ForwardM2(0x80, 0)
         else:
             print("bad act choice, stopping both")
             self.act.ForwardM1(0x80, 0)
