@@ -12,19 +12,19 @@ from BeltControl import BeltControl
 STATE = new_state()
 SUBS  = set()
 DRIVE = DriveControl()
-ACTS = ActuatorControl('/dev/roboclaw3')
+ACTS = ActuatorControl('/dev/roboclaw3', '/dev/roboclaw5')
 BELTS = BeltControl('/dev/roboclaw4')
 
 class MessageHub:
     action_dict = {
-        'motor1speed'       : (lambda state: DRIVE.moveM1(state)),
-        'motor2speed'       : (lambda state: DRIVE.moveM2(state)),
-        'motor3speed'       : (lambda state: DRIVE.moveM3(state)),
-        'motor4speed'       : (lambda state: DRIVE.moveM4(state)),
-        'digarmspeed'       : (lambda state: ACTS.moveDig(state)),
-        'raisearmspeed'     : (lambda state: ACTS.moveRaise(state)),
-        'digmotorspeed'     : (lambda state: BELTS.dig(state)),
-        'offloadmotorspeed' : (lambda state: BELTS.offload(state))
+        'motor1speed'       : lambda state: DRIVE.moveM1(state),
+        'motor2speed'       : lambda state: DRIVE.moveM2(state),
+        'motor3speed'       : lambda state: DRIVE.moveM3(state),
+        'motor4speed'       : lambda state: DRIVE.moveM4(state),
+        'digarmspeed'       : lambda state: ACTS.moveDig(state),
+        'raisearmspeed'     : lambda state: ACTS.moveRaise(state),
+        'digmotorspeed'     : lambda state: BELTS.dig(state),
+        'offloadmotorspeed' : lambda state: BELTS.offload(state)
     }
     def __init__(self):
         asyncio.get_event_loop().run_until_complete(websockets.serve(self.counter, port=1234))
@@ -63,7 +63,7 @@ class MessageHub:
                         STATE[key]=data[key]
                         if key.startswith('control'):
                             motor = key.split('.')[1]
-                            self.action_dict.get(motor, lambda state: print("unknown control key " + key)(STATE[key]))
+                            self.action_dict.get(str(motor), lambda state: print("unknown control key " + key))(STATE[key])
                     await self.notify_state()
 
         except websockets.ConnectionClosed:

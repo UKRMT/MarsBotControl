@@ -23,12 +23,16 @@ class ActuatorControl:
     # max and min values that the ADCInterface will send
     MAX_POS = 100
     MIN_POS = 0
-    def __init__(self, addr):
-        self.act =  Roboclaw(addr, 115200)
-        while self.act.Open()==0:
+    def __init__(self, addr1, addr2):
+        self.act1 =  Roboclaw(addr1, 115200)
+        self.act2 = Roboclaw(addr2, 115200)
+        while self.act1.Open()==0:
             print("Failed to open actuator comms, trying again.")
             time.sleep(1)
-        print("Opened Actuator roboclaw to ",addr)
+        while self.act2.Open()==0:
+            print("Failed to open actuator 2 comms, trying again")
+            time.sleep(1)
+        print("Opened Actuator roboclaw to ",addr1, "and ",addr2)
 
     ############# public methods #############
 
@@ -45,6 +49,8 @@ class ActuatorControl:
     def moveRaise(self, speed=False):
         self.moveActBinary('raise',speed)
 
+
+        
     #  move up with the option of specifying speed
     def moveUp(self, speed=False):
         #refresh position
@@ -57,7 +63,7 @@ class ActuatorControl:
     # move down with the option of specifying speed
     def moveDown(self, speed=False):
         #refresh position
-        self.pos = self.act_interface.readADC()
+        #self.pos = self.act_interface.readADC()
         if not speed:
             self.moveActBinary(2201)
         else:
@@ -76,22 +82,30 @@ class ActuatorControl:
         speed = self.verify_speed(speed)
         if actChoice=='dig':
             if speed <= 1800:
-                self.act.ForwardM1(0x80, 127)
+                self.act1.ForwardM1(0x80, 127)
+                self.act2.ForwardM1(0x80, 127)
             elif speed >= 2200:
-                self.act.BackwardM1(0x80, 127)
+                self.act1.BackwardM1(0x80, 127)
+                self.act2.BackwardM1(0x80, 127)
             else:
-                self.act.ForwardM1(0x80, 0)
+                self.act1.ForwardM1(0x80, 0)
+                self.act2.ForwardM1(0x80, 0)
         elif actChoice=='raise':
             if speed <= 1800:
-                self.act.ForwardM2(0x80, 127)
+                self.act1.ForwardM2(0x80, 127)
+                self.act2.ForwardM2(0x80, 127)
             elif speed >= 2200:
-                self.act.BackwardM2(0x80, 127)
+                self.act1.BackwardM2(0x80, 127)
+                self.act2.BackwardM2(0x80, 127)
             else:
-                self.act.ForwardM2(0x80, 0)
+                self.act1.ForwardM2(0x80, 0)
+                self.act2.ForwardM2(0x80, 0)
         else:
             print("bad act choice, stopping both")
-            self.act.ForwardM1(0x80, 0)
-            self.act.ForwardM2(0x80, 0)
+            self.act1.ForwardM1(0x80, 0)
+            self.act1.ForwardM1(0x80, 0)
+            self.act2.ForwardM2(0x80, 0)
+            self.act2.ForwardM2(0x80, 0)
 
 
     # variable speed actuator movement
@@ -112,21 +126,27 @@ class ActuatorControl:
 
         if direction == "f" :
             if actChoice=='dig':
-                self.act.ForwardM1(0x80, adjusted_speed)
+                self.act1.ForwardM1(0x80, adjusted_speed)
+                self.act2.ForwardM1(0x80, adjusted_speed)
             elif actChoice=='raise':
-                self.act.ForwardM2(0x80, adjusted_speed)
+                self.act1.ForwardM2(0x80, adjusted_speed)
+                self.act2.ForwardM2(0x80, adjusted_speed)
             else:
                 print("bad actuator choice")
         elif direction == "b":
             if actChoice=='dig':
-                self.act.BackwardM1(0x80, adjusted_speed)
+                self.act1.BackwardM1(0x80, adjusted_speed)
+                self.act2.BackwardM1(0x80, adjusted_speed)
             if actChoice=='raise':
-                self.act.BackwardM2(0x80, adjusted_speed)
+                self.act1.BackwardM2(0x80, adjusted_speed)
+                self.act2.BackwardM2(0x80, adjusted_speed)
             else:
                 print("bad actuator choice")
         else:
-            self.act.ForwardM1(0x80, 0)
-            self.act.ForwardM2(0x80, 0)
+            self.act1.ForwardM1(0x80, 0)
+            self.act1.ForwardM2(0x80, 0)
+            self.act2.ForwardM1(0x80, 0)
+            self.act2.ForwardM2(0x80, 0)
 
     # verifies speed and position
     def verify_speed(self, speed):
