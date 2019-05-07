@@ -2,11 +2,10 @@ import websockets
 import asyncio
 import json
 
-
 async def ping():
     async with websockets.connect('ws://localhost:1234') as ws:
         try:
-            await ws.send(json.dumps({'action':'ping'}))
+            await ws.send("ping")
         finally:
             await ws.close()
 

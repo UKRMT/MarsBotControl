@@ -43,6 +43,15 @@ class ActuatorControl:
         #self.pos = self.act_interface.readADC()
 
     # move the actuator letting the move command specify the direction
+
+    def readCurrents(self, i):
+        con1 = self.act1.ReadCurrents(0x80)
+        con2 = self.act2.ReadCurrents(0x80)
+        digCurrent = (con1[1] + con2[1]) / 100
+        raiseCurrent = (con1[2] + con2[2]) /100
+        currents = [digCurrent, raiseCurrent]
+        return currents[i]
+
     def moveDig(self, speed=False):
         self.moveActBinary('dig',speed)
 

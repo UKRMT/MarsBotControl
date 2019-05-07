@@ -17,7 +17,6 @@ class BeltControl:
 
     def __init__(self, addr):
         self.act =  Roboclaw(addr, 115200)
-        self.currents = [0,0]
         while self.act.Open()==0:
             print("Failed to open actuator comms, trying again.")
             time.sleep(1)
@@ -25,27 +24,17 @@ class BeltControl:
 
     ############# public methods #############
 
-    def updateCurrents(self):    
-        con1 = self.act.ReadCurrents(0x80)
-        digCurr = float(con1[1]) / 100
-        offCurr = float(con1[2]) / 100
-        
-        self.currents = [digCurr, offCurr] 
-    # method for reading the blet currents
-    def readCurrents(self, i):
-        return self.currents[i]
-
     # control the offload belt
     def offload(self, speed):
         speed = self.verify_speed(speed)
         direction = "s"
         if speed <= 1800:
             # move actuator forward
-            adjusted_speed = self.translate_value(speed, 1800,0,0,127)
+            adjusted_speed = translate_value(speed, 1800,0,0,127)
             direction = "b"
         elif speed >= 2200:
             #move actuator backward
-            adjusted_speed = self.translate_value(speed, 2200, 4095,0,127)
+            adjusted_speed = translate_value(speed, 2200, 4095,0,127)
             direction = "f"
         else :
             #do not move actuator
@@ -58,7 +47,6 @@ class BeltControl:
             self.act.BackwardM1(0x80, int(adjusted_speed))
         else:
             self.act.ForwardM1(0x80, 0)
-        self.updateCurrents()
 
     # control the digging belt
     def dig(self, speed):
@@ -83,7 +71,7 @@ class BeltControl:
             self.act.BackwardM2(0x80, int(adjusted_speed))
         else:
             self.act.ForwardM2(0x80, 0)
-        self.updateCurrents()
+
         ############# private methods #############
 
     # verifies speed and position
