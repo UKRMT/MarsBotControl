@@ -1,0 +1,20 @@
+<html>
+	<head>
+	<script>
+		window.onload = function() {
+			var image1 = document.getElementById("img1");
+			var image2 = document.getElementById("img2");
+
+			function updateImage() {
+				image1.src = "f-current.png";
+				image2.src = "b-current.png";
+			}
+			setInterval(updateImage, 1000);
+		}
+	</script>
+	</head>
+	<body>
+		<img id="img1" src="f-current.png" />
+		<img id="img2" src="b-current.png" />
+	</body>
+</html>
