@@ -1,0 +1,286 @@
+<html>
+  <head>
+
+	<link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script>
+      var FULLBEANS = 4094;
+      var TWOBEANS = 3300;
+      var ONEBEANS = 2600;
+      var NOBEANS = 2000;
+      var ONEREVBEANS = 1400;
+      var TWOREVBEANS = 700; 
+      var FULLREVBEANS = 0;
+      var controlHash = {
+        "F3": {
+          "control.motor1speed":FULLBEANS,
+          "control.motor2speed":FULLBEANS,
+          "control.motor3speed":FULLBEANS,
+          "control.motor4speed":FULLBEANS,
+        },
+        "F2": {
+          "control.motor1speed":TWOBEANS,
+          "control.motor2speed":TWOBEANS,
+          "control.motor3speed":TWOBEANS,
+          "control.motor4speed":TWOBEANS,
+        },
+        "F1": {
+          "control.motor1speed":ONEBEANS,
+          "control.motor2speed":ONEBEANS,
+          "control.motor3speed":ONEBEANS,
+          "control.motor4speed":ONEBEANS,
+        },
+        "B3": {
+          "control.motor1speed":FULLREVBEANS,
+          "control.motor2speed":FULLREVBEANS,
+          "control.motor3speed":FULLREVBEANS,
+          "control.motor4speed":FULLREVBEANS,
+        },
+        "B2": {
+          "control.motor1speed":TWOREVBEANS,
+          "control.motor2speed":TWOREVBEANS,
+          "control.motor3speed":TWOREVBEANS,
+          "control.motor4speed":TWOREVBEANS,
+        },
+        "B1": {
+          "control.motor1speed":ONEREVBEANS,
+          "control.motor2speed":ONEREVBEANS,
+          "control.motor3speed":ONEREVBEANS,
+          "control.motor4speed":ONEREVBEANS,
+        },
+        "L3": {
+          "control.motor1speed":FULLREVBEANS,
+          "control.motor2speed":FULLREVBEANS,
+          "control.motor3speed":FULLBEANS,
+          "control.motor4speed":FULLBEANS,
+        },
+        "L2": {
+          "control.motor1speed":TWOREVBEANS,
+          "control.motor2speed":TWOREVBEANS,
+          "control.motor3speed":TWOBEANS,
+          "control.motor4speed":TWOBEANS,
+        },
+        "L1": {
+          "control.motor1speed":ONEREVBEANS,
+          "control.motor2speed":ONEREVBEANS,
+          "control.motor3speed":ONEBEANS,
+          "control.motor4speed":ONEBEANS,
+        },
+        "R3": {
+          "control.motor1speed":FULLBEANS,
+          "control.motor2speed":FULLBEANS,
+          "control.motor3speed":FULLREVBEANS,
+          "control.motor4speed":FULLREVBEANS,
+        },
+        "R2": {
+          "control.motor1speed":TWOBEANS,
+          "control.motor2speed":TWOBEANS,
+          "control.motor3speed":TWOREVBEANS,
+          "control.motor4speed":TWOREVBEANS,
+        },
+        "R1": {
+          "control.motor1speed":ONEBEANS,
+          "control.motor2speed":ONEBEANS,
+          "control.motor3speed":ONEREVBEANS,
+          "control.motor4speed":ONEREVBEANS,
+        },
+        "STOP": {
+          "control.motor1speed":NOBEANS,
+          "control.motor2speed":NOBEANS,
+          "control.motor3speed":NOBEANS,
+          "control.motor4speed":NOBEANS,
+        },
+        "DR" :  "control.digarmspeed",
+        "DL" : "control.digarmspeed",
+        "digspeed" : "control.digmotorspeed",
+        "offloadspeed" : "control.offloadmotorspeed",
+        "offloadstop" : {
+          "control.offloadmotorspeed":NOBEANS
+        },
+        "digspeedstop" : {
+          "control.digmotorspeed":NOBEANS
+        }
+
+      }
+      function sendControl(controlElem){
+        var controlID = controlElem.id;
+        var controlSocket = new WebSocket("ws://192.168.1.150:1234");
+        console.log(controlHash[controlID]);
+        var msgval = {}
+        controlSocket.onopen = function(event){
+          if(controlID == "digspeed" || controlID == "offloadspeed"){
+            var speed = parseInt(controlElem.value);
+            msgval[controlHash[controlID]] = speed;
+          } else if(controlID == "DL"){
+            var speed = 2200+parseInt(document.getElementById("digact").value);
+            msgval[controlHash[controlID]] = speed;
+          } else if(controlID == "DR"){ 
+            var speed = 1800-parseInt(document.getElementById("digact").value);
+            msgval[controlHash[controlID]] = speed;
+          } else {
+            msgval = controlHash[controlID];
+          }
+          controlSocket.send(JSON.stringify(msgval));
+          controlSocket.close();  
+        }
+      }
+      function stopper(){
+        var controlSocket = new WebSocket("ws://192.168.1.150:1234");
+        msg = {
+          "control.digarmspeed":2000,
+          "control.raisearmspeed":2000,
+          "control.motor1speed":2000,
+          "control.motor2speed":2000,
+          "control.motor3speed":2000,
+          "control.motor4speed":2000
+        }
+        controlSocket.onopen = function(event){
+          controlSocket.send(JSON.stringify(msg));  
+          controlSocket.close();  
+        }
+      }
+      
+      var stopper = addEventListener("mouseup", stopper)
+      /*$(window).not("click")(function(){
+  var controlSocket = new WebSocket("ws://192.168.1.150:1234");
+  controlSocket.onopen = function(event){
+    controlSocket.send(JSON.stringify(controlHash["STOP"]))
+    controlSocket.close();
+  }
+});*/
+    </script>
+    <style>
+
+    </style> 
+  </head>
+  <body>
+  	<h1>University of Kentucky RMC 2019 Robot Controller</h1>
+    <table id="drive">
+      <tr id="row1">
+        <td>          
+        <td>          </td> 
+        <td>          </td> 
+        <td>          <button id="F3" onmousedown="sendControl(this)">F3</button></button></td> 
+        <td>          </td> 
+        <td>          </td> 
+        <td>          
+      </tr>
+      <tr id="row2">
+        <td>          </td> 
+        <td>          
+        <td>          </td> 
+        <td>          <button id="F2" onmousedown="sendControl(this)">F2</button></button></td> 
+        <td>          </td> 
+        <td>          
+        <td>          </td> 
+      </tr>
+      <tr id="row3">
+        <td>          </td> 
+        <td>          </td> 
+        <td>          
+        <td>          <button id="F1" onmousedown="sendControl(this)">F1</button></button></td> 
+        <td>          
+        <td>          </td> 
+        <td>          </td> 
+      </tr>
+      <tr id="row4">
+        <td>          <button id="L3" onmousedown="sendControl(this)">L3</button></button></td> 
+        <td>          <button id="L2" onmousedown="sendControl(this)">L2</button></button></td> 
+        <td>          <button id="L1" onmousedown="sendControl(this)">L1</button></button></td> 
+        <td>          <button id="STOP" onmousedown="sendControl(this)">STOP</button></button></td> 
+        <td>          <button id="R1" onmousedown="sendControl(this)">R1</button></button></td> 
+        <td>          <button id="R2" onmousedown="sendControl(this)">R2</button></button></td> 
+        <td>          <button id="R3" onmousedown="sendControl(this)">R3</button></button></td> 
+      </tr>
+      <tr id="row5">
+        <td>          </td> 
+        <td>          </td> 
+        <td>          
+        <td>          <button id="B1" onmousedown="sendControl(this)">B1</button></button></td> 
+        <td>          
+        <td>          </td> 
+        <td>          </td> 
+      </tr>
+      <tr id="row6">
+        <td>          </td> 
+        <td>          
+        <td>          </td> 
+        <td>          <button id="B2" onmousedown="sendControl(this)">B2</button></button></td> 
+        <td>          </td> 
+        <td>          
+        <td>          </td> 
+      </tr>
+      <tr id="row7">
+        <td>          
+        <td>          </td> 
+        <td>          </td> 
+        <td>          <button id="B3" onmousedown="sendControl(this)">B3</button></button></td> 
+        <td>          </td> 
+        <td>          </td> 
+        <td>          
+      </tr>
+    </table>
+	
+    <table id="DigDepth">
+      <tr>
+        <td id="drivefull" colspan="2">
+          <button id="DR" onmousedown="sendControl(this)">Raise Dig</button>
+        </td>
+        
+	  </tr>
+	  <tr id="driveindright">
+        <td>
+          <button class="DriveIndButton" id="DR1" onmousedown="sendControl(this)">Raise Dig 1</button>
+        </td>
+		<td>
+          <button class="DriveIndButton" id="DR2" onmousedown="sendControl(this)">Raise Dig 2</button>
+        </td>
+	  </tr>
+	  <tr id="driveindleft">
+        <td>
+          <button class="DriveIndButton" id="DL1" onmousedown="sendControl(this)">Lower Dig 1</button>
+        </td>
+		<td>
+          <button class="DriveIndButton" id="DL2" onmousedown="sendControl(this)">Lower Dig 2</button>
+        </td>
+	  </tr>
+	  <tr id="drivefull">
+        <td  colspan="2"> 
+          <button id="DL" onmousedown="sendControl(this)">Lower Dig</button>
+        </td>
+      </tr> 
+    </table>
+	
+	
+	<table id="Excavation">
+	<th align="left"><b>Excavation Speed</b></th>
+	<tr>
+        <td><input class="slider" type="range" min="0" max="4000" value="2000" id="digspeed" onmouseup="sendControl(this)"></td>
+    </tr>
+      <tr>
+        <td><button class="stop" id="digspeedstop" onclick="sendControl(this)">STOP</button></td>
+      </tr>
+	</table>
+	
+	
+    <table id="Offload">
+	<th align="left"><b>Offload Speed</b></th>
+      <tr>
+        <td><input class="slider" type="range" min="0" max="4000" value="2000" id="offloadspeed" onmouseup="sendControl(this)"></td>
+      </tr>
+      <tr>
+        <td><button class="stop" id="offloadstop" onclick="sendControl(this)">STOP</button></td>
+      </tr>
+    </table>
+	
+	<table id="DigAngle">
+	<tr>
+		<td><button class="DigAngleButton" id="digangup">Dig Angle Up</button></td>
+	</tr>
+	<tr>
+		<td><button class="DigAngleButton" id="digangdown">Dig Angle Down</button></td>
+	</tr>
+	</table>
+  <body>
+
+</html>

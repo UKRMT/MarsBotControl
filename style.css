@@ -1,0 +1,160 @@
+
+body { 
+  background-color: blue;
+}
+
+h1{
+	position: absolute;
+	left: 25%;
+	text-align: center;
+	color: white
+}
+
+td {
+	//border: 3px solid #73AD21;
+  padding:5px;
+}
+
+th {
+	font-family: "Arial";
+	font-size: 24;
+	color: white;
+	text-align: center;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: gray;
+  outline: none;
+  opacity: 1;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 0.7;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: navy;//#4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+button {
+  font-family: "Arial";
+  font-weight: bold;
+  font-size: 20;
+  text : 50px;
+  color: white;
+  background-color: gray; 
+  border-radius: 20px;
+  height: 80px;
+  width : 120px
+}
+#stop { 
+  background-color: #dd2222;
+}
+
+.stop{
+	background-color: #dd2222;
+	width: 250px;
+}
+
+
+#DigAngle {
+  position: absolute;
+  top: 550px;
+  left: 900px;
+  width: 200px;
+  height: 100px;
+  z-index: 1; 
+}
+.DigAngleButton{
+	width: 250px;
+}
+
+#drive{
+  position: absolute;
+  top: 100px;
+  left: 20px;
+  width: 100px;
+  height: 100px;
+  //border: 3px solid #73AD21;
+  -webkit-column-gap: 5px; /* Chrome, Safari, Opera */
+  -moz-column-gap: 5px; /* Firefox */
+  column-gap: 5px;
+  
+}
+
+#drive button{
+  width: 100px;
+}
+
+#DigDepth{
+  position: absolute;
+  top: 100px;
+  left: 900px;
+  width: 200px;
+  height: 100px;
+  //border: 3px solid #73AD21;
+  //border-spacing: 50px 0;
+  padding: 10px 0;
+}
+
+
+
+#drivefull{
+	text-align: left;
+}
+
+#drivefull button{
+	width: 260px;
+}
+
+
+
+.DriveIndButton {
+	width: 115px;
+	align: center;
+}
+	
+
+#Offload{
+  position: absolute;
+  top: 125px;
+  left: 1250px;
+  width: 200px;
+  height: 100px;
+  //border: 3px solid #73AD21;
+}
+
+#Excavation{
+  position: absolute;
+  top: 340px;
+  left: 1250px;
+  width: 200px;
+  height: 100px;
+  //border: 3px solid #73AD21;
+}
+
+#digact{
+	  width: 50px;
+}
+
+
