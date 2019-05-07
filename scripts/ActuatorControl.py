@@ -82,7 +82,7 @@ class ActuatorControl:
         speed = self.verify_speed(speed)
         if actChoice=='dig':
             if speed <= 1800:
-                self.act1.ForwardM1(0x80, 127)
+                self.act1.ForwardM1(0x80, 118)
                 self.act2.ForwardM1(0x80, 127)
             elif speed >= 2200:
                 self.act1.BackwardM1(0x80, 127)
