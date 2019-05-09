@@ -4,6 +4,7 @@ import datetime
 import time
 import re
 import os
+import shutil
 
 pygame.camera.init()
 pygame.camera.list_cameras()
@@ -18,14 +19,16 @@ while(1):
 	j = bcam.get_image()
     i = pygame.transform.rotate(i, 180)
 	j = pygame.transform.rotate(j, -90)
-    pygame.image.save(i, "/var/www/html/img/f-loading.png")
-	pygame.image.save(j, "/var/www/html/img/b-loading.png")
+	if(counter > 0):
+		pygame.image.save(i, "/var/www/html/img/f-loading.png")
+		pygame.image.save(j, "/var/www/html/img/b-loading.png")
+		os.rename("/var/www/html/img/f-loading.png", "/var/www/html/img/f-current.png")
+		os.rename("/var/www/html/img/b-loading.png", "/var/www/html/img/b-current.png")
+	else:
+		pygame.image.save(i, "/var/www/html/img/f-current.png")
+		pygame.image.save(j, "/var/www/html/img/b-current.png")
     print('Saved images.\n')
-    os.rename("/var/www/html/img/f-loading.png", "/var/www/html/img/f-" + str(counter) + ".png")
-    os.rename("/var/www/html/img/b-loading.png", "/var/www/html/img/b-" + str(counter) + ".png")
-	if(counter > 5):
-		os.rename("/var/www/html/img/f-" + str(counter - 5) + ".png", "/home/pi/marsbotcontrol/stills/f-{}{}".format(timestr, ".png"))
-		os.rename("/var/www/html/img/f-" + str(counter - 5) + ".png", "/home/pi/marsbotcontrol/stills/b-{}{}".format(timestr, ".png"))
-		print("Moved old images to stills.")
     time.sleep(0.5)
+	#os.rename("/var/www/html/img/f-current.png", "/home/pi/marsbotcontrol/stills/f-{}{}".format(timestr, ".png"))
+	#os.rename("/var/www/html/img/b-curren.png", "/home/pi/marsbotcontrol/stills/b-{}{}".format(timestr, ".png"))
 	couter += 1
